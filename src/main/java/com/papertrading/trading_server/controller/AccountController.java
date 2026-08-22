@@ -22,6 +22,6 @@ public class AccountController {
     @GetMapping
     public ResponseEntity<AccountResponse> getAccountById(@RequestParam Long id){
         AccountResponse accountResponse = accountService.getAccountById(id);
-        return new ResponseEntity<>(accountResponse, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(accountResponse, HttpStatus.OK);
     }
 }

@@ -33,7 +33,7 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<UserResponse> getUser(@RequestParam String email) {
         UserResponse userResponse = userService.getUserByEmail(email);
-        return new ResponseEntity<>(userResponse, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
     
     

@@ -30,14 +30,14 @@ public class InstrumentController {
         System.out.println("[DEBUG]");
         System.out.println(request);
         InstrumentResponse instrumentResponse = instrumentService.createInstrument(request);
-        return new ResponseEntity<>(instrumentResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(instrumentResponse, HttpStatus.CREATED);
     }
     
     
     @GetMapping()
     public ResponseEntity<InstrumentResponse> getInstrumentBySymbol(@RequestParam String symbol) {
         InstrumentResponse instrumentResponse = instrumentService.getInstrumentBySymbol(symbol);
-        return new ResponseEntity<>(instrumentResponse, HttpStatus.FOUND);
+        return new ResponseEntity<>(instrumentResponse, HttpStatus.OK);
     }
     
 }
