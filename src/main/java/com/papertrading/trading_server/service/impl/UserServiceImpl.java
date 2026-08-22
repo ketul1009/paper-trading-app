@@ -2,16 +2,17 @@ package com.papertrading.trading_server.service.impl;
 
 import java.math.BigDecimal;
 
-import com.papertrading.trading_server.dto.request.CreateUserRequest;
-import com.papertrading.trading_server.dto.response.UserResponse;
-import com.papertrading.trading_server.service.UserService;
-import com.papertrading.trading_server.entity.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.papertrading.trading_server.dto.request.CreateUserRequest;
+import com.papertrading.trading_server.dto.response.UserResponse;
 import com.papertrading.trading_server.entity.Account;
+import com.papertrading.trading_server.entity.User;
 import com.papertrading.trading_server.repository.UserRepository;
+import com.papertrading.trading_server.service.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +40,20 @@ public class UserServiceImpl implements UserService {
         user.setAccount(account);
         User savedUser = userRepository.save(user);
         return UserResponse.fromEntity(savedUser);
+    }
+
+    @Override
+    public UserResponse getUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new IllegalArgumentException("User with email " + email + " does not exist"));
+        return UserResponse.fromEntity(user);
+    }
+
+    @Override
+    public UserResponse getUserById(Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
+        return UserResponse.fromEntity(user);
     }
 
 }

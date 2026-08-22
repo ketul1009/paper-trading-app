@@ -5,5 +5,6 @@ import com.papertrading.trading_server.dto.response.UserResponse;
 
 public interface UserService {
     UserResponse createUser(CreateUserRequest request);
-    // UserResponse getUser(Long id);
+    UserResponse getUserByEmail(String email);
+    UserResponse getUserById(Long id);
 }
