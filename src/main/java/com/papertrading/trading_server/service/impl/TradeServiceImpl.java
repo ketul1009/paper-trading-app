@@ -18,7 +18,9 @@ import com.papertrading.trading_server.repository.UserRepository;
 import com.papertrading.trading_server.service.TradeService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TradeServiceImpl implements TradeService {
@@ -30,6 +32,7 @@ public class TradeServiceImpl implements TradeService {
     @Override
     @Transactional
     public TradeResponse createTrade(CreateTradeRequest request) {
+        log.info("Creating new Trade");
         User user = userRepository.findById(request.getUser_id())
             .orElseThrow(() -> new IllegalArgumentException("User does not exist"));
     
@@ -46,12 +49,13 @@ public class TradeServiceImpl implements TradeService {
             .build();
         
         Trade savedTrade = tradeRepository.save(trade);
-        
+        log.info("Trade created successfully");
         return TradeResponse.fromEntity(savedTrade);
     }
 
     @Override
     public TradeResponse getTrade(Long id) {
+        log.info("Fetching trade with id " + id);
         Trade trade = tradeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Trade with id " + id + " does not exist"));
         
