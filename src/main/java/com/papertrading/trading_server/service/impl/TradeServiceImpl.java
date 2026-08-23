@@ -40,6 +40,7 @@ public class TradeServiceImpl implements TradeService {
             .user(user)
             .instrument(instrument)
             .purchage_price(request.getPurchase_price())
+            .quantity(request.getQuantity())
             .selling_price(null)
             .status(TradeStatus.OPEN)
             .build();

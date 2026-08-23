@@ -17,6 +17,7 @@ public class TradeResponse {
     private Long instrument_id;
     private BigDecimal purchase_price;
     private BigDecimal selling_price;
+    private BigDecimal quantity;
     private TradeStatus status;
     private Instant created_at;
     private Instant closed_at;
@@ -28,6 +29,7 @@ public class TradeResponse {
             .instrument_id(trade.getInstrument().getId())
             .purchase_price(trade.getPurchage_price())
             .selling_price(trade.getSelling_price())
+            .quantity(trade.getQuantity())
             .status(trade.getStatus())
             .created_at(trade.getCreated_at())
             .closed_at(trade.getClosed_at())

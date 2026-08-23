@@ -43,6 +43,9 @@ public class Trade {
     @JoinColumn(name = "instrument_id", nullable = false)
     private Instrument instrument;
 
+    @Column(nullable = false)
+    private BigDecimal quantity;
+
     @Column(name = "purchase_price", nullable=false)
     private BigDecimal purchage_price;
 

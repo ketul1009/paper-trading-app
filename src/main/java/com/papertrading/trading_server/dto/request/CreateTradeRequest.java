@@ -18,4 +18,8 @@ public class CreateTradeRequest {
     @NotNull(message = "purchase_price is required")
     @Positive(message = "purchase_price must be greater than 0")
     private BigDecimal purchase_price;
+
+    @NotNull(message = "quantity is required")
+    @Positive(message  = "quantity cannot be required")
+    private BigDecimal quantity;
 }
