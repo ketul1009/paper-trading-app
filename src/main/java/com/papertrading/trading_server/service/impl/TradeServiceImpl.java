@@ -1,5 +1,6 @@
 package com.papertrading.trading_server.service.impl;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.springframework.stereotype.Service;
@@ -8,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.papertrading.trading_server.dto.request.CloseTradeRequest;
 import com.papertrading.trading_server.dto.request.CreateTradeRequest;
 import com.papertrading.trading_server.dto.response.TradeResponse;
+import com.papertrading.trading_server.entity.Account;
 import com.papertrading.trading_server.entity.Instrument;
 import com.papertrading.trading_server.entity.Trade;
 import com.papertrading.trading_server.entity.User;
 import com.papertrading.trading_server.entity.enums.TradeStatus;
+import com.papertrading.trading_server.repository.AccountRepository;
 import com.papertrading.trading_server.repository.InstrumentRepository;
 import com.papertrading.trading_server.repository.TradeRepository;
 import com.papertrading.trading_server.repository.UserRepository;
@@ -28,6 +31,7 @@ public class TradeServiceImpl implements TradeService {
     private final TradeRepository tradeRepository;
     private final UserRepository userRepository;
     private final InstrumentRepository instrumentRepository;
+    private final AccountRepository accountRepository;
 
     @Override
     @Transactional
@@ -39,6 +43,13 @@ public class TradeServiceImpl implements TradeService {
         Instrument instrument = instrumentRepository.findById(request.getInstrument_id())
             .orElseThrow(() -> new IllegalArgumentException("Instrument does not exist"));
 
+        Account account = user.getAccount();
+        
+        BigDecimal tradeValue = request.getPurchase_price().multiply(request.getQuantity());
+        if (account.getCashBalance().compareTo(tradeValue) < 0) {
+            throw new IllegalArgumentException("Not enough cash balance available. cash balance: " + account.getCashBalance());
+        }
+
         Trade trade = Trade.builder()
             .user(user)
             .instrument(instrument)
@@ -48,6 +59,9 @@ public class TradeServiceImpl implements TradeService {
             .status(TradeStatus.OPEN)
             .build();
         
+        account.setCashBalance(account.getCashBalance().subtract(tradeValue));
+        accountRepository.save(account);
+
         Trade savedTrade = tradeRepository.save(trade);
         log.info("Trade created successfully");
         return TradeResponse.fromEntity(savedTrade);
@@ -67,10 +81,17 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Trade with id " + id + " does not exist"));
         
+        Account account = trade.getUser().getAccount();
+        BigDecimal tradeValue = request.getSelling_price().multiply(trade.getQuantity());
+
         trade.setSelling_price(request.getSelling_price());
         trade.setClosed_at(Instant.now());
         trade.setStatus(TradeStatus.CLOSED);
         tradeRepository.save(trade);
+
+        account.setCashBalance(account.getCashBalance().add(tradeValue));
+        accountRepository.save(account);
+        
         return TradeResponse.fromEntity(trade);
     }
 }
