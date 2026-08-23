@@ -1,5 +1,8 @@
 package com.papertrading.trading_server.controller;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.papertrading.trading_server.dto.request.CreateInstrumentRequest;
 import com.papertrading.trading_server.dto.response.InstrumentResponse;
+import com.papertrading.trading_server.dto.response.PagedResponse;
 import com.papertrading.trading_server.service.InstrumentService;
 
 import jakarta.validation.Valid;
@@ -38,6 +42,14 @@ public class InstrumentController {
     public ResponseEntity<InstrumentResponse> getInstrumentBySymbol(@RequestParam String symbol) {
         InstrumentResponse instrumentResponse = instrumentService.getInstrumentBySymbol(symbol);
         return new ResponseEntity<>(instrumentResponse, HttpStatus.OK);
+    }
+    
+    @GetMapping("/all")
+    public ResponseEntity<PagedResponse<InstrumentResponse>> getAllInstruments(
+            @PageableDefault(page = 0, size = 20, sort = "id", direction = Sort.Direction.ASC) Pageable pageable) {
+                
+        PagedResponse<InstrumentResponse> response = instrumentService.getAllInstruments(pageable);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
 }

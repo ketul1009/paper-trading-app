@@ -1,10 +1,13 @@
 package com.papertrading.trading_server.service.impl;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.papertrading.trading_server.dto.request.CreateInstrumentRequest;
 import com.papertrading.trading_server.dto.response.InstrumentResponse;
+import com.papertrading.trading_server.dto.response.PagedResponse;
 import com.papertrading.trading_server.entity.Instrument;
 import com.papertrading.trading_server.repository.InstrumentRepository;
 import com.papertrading.trading_server.service.InstrumentService;
@@ -40,5 +43,13 @@ public class InstrumentServiceImpl implements InstrumentService{
         Instrument instrument = instrumentRepository.findBySymbol(symbol)
             .orElseThrow(() -> new IllegalArgumentException("Instrument with symbol " + symbol + " not found"));
         return InstrumentResponse.fromEntity(instrument);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public PagedResponse<InstrumentResponse> getAllInstruments(Pageable pageable) {
+        Page<InstrumentResponse> instrumentPage = instrumentRepository.findAll(pageable)
+            .map(InstrumentResponse::fromEntity);
+        return PagedResponse.of(instrumentPage);
     }
 }
