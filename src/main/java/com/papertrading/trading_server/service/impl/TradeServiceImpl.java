@@ -1,8 +1,11 @@
 package com.papertrading.trading_server.service.impl;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.papertrading.trading_server.dto.request.CloseTradeRequest;
 import com.papertrading.trading_server.dto.request.CreateTradeRequest;
 import com.papertrading.trading_server.dto.response.TradeResponse;
 import com.papertrading.trading_server.entity.Instrument;
@@ -51,6 +54,17 @@ public class TradeServiceImpl implements TradeService {
         Trade trade = tradeRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("Trade with id " + id + " does not exist"));
         
+        return TradeResponse.fromEntity(trade);
+    }
+
+    @Override
+    public TradeResponse closeTrade(Long id, CloseTradeRequest request) {
+        Trade trade = tradeRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Trade with id " + id + " does not exist"));
+        
+        trade.setSelling_price(request.getSelling_price());
+        trade.setClosed_at(Instant.now());
+        trade.setStatus(TradeStatus.CLOSED);
         return TradeResponse.fromEntity(trade);
     }
 }
