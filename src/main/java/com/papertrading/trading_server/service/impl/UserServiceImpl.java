@@ -3,6 +3,7 @@ package com.papertrading.trading_server.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final TradeRepository tradeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -36,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
         User user = User.builder()
             .email(request.getEmail())
-            .passwordHash(request.getPassword())
+            .passwordHash(passwordEncoder.encode(request.getPassword()))
             .build();
         
         Account account = Account.builder()
