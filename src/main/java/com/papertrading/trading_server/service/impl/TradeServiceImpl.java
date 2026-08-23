@@ -65,6 +65,7 @@ public class TradeServiceImpl implements TradeService {
         trade.setSelling_price(request.getSelling_price());
         trade.setClosed_at(Instant.now());
         trade.setStatus(TradeStatus.CLOSED);
+        tradeRepository.save(trade);
         return TradeResponse.fromEntity(trade);
     }
 }

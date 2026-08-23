@@ -1,5 +1,7 @@
 package com.papertrading.trading_server.controller;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.papertrading.trading_server.dto.request.CreateUserRequest;
+import com.papertrading.trading_server.dto.response.TradeResponse;
 import com.papertrading.trading_server.dto.response.UserResponse;
 import com.papertrading.trading_server.service.UserService;
 
@@ -36,5 +39,10 @@ public class UserController {
         return new ResponseEntity<>(userResponse, HttpStatus.OK);
     }
     
+    @GetMapping("/trades")
+    public ResponseEntity<List<TradeResponse>> getUserTrades(@RequestParam Long user_id) {
+        List<TradeResponse> tradeResponses = userService.getUserTrades(user_id);
+        return new ResponseEntity<>(tradeResponses, HttpStatus.OK);
+    }
     
 }

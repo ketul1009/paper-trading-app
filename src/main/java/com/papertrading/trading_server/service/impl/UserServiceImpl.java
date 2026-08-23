@@ -1,14 +1,17 @@
 package com.papertrading.trading_server.service.impl;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.papertrading.trading_server.dto.request.CreateUserRequest;
+import com.papertrading.trading_server.dto.response.TradeResponse;
 import com.papertrading.trading_server.dto.response.UserResponse;
 import com.papertrading.trading_server.entity.Account;
 import com.papertrading.trading_server.entity.User;
+import com.papertrading.trading_server.repository.TradeRepository;
 import com.papertrading.trading_server.repository.UserRepository;
 import com.papertrading.trading_server.service.UserService;
 
@@ -19,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final TradeRepository tradeRepository;
 
     @Override
     @Transactional
@@ -43,6 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getUserByEmail(String email) {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new IllegalArgumentException("User with email " + email + " does not exist"));
@@ -50,10 +55,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
             .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
         return UserResponse.fromEntity(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<TradeResponse> getUserTrades(Long id){
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("User with id " + id + " does not exist"));
+        
+        return tradeRepository.findByUserId(id)
+            .stream()
+            .map(TradeResponse::fromEntity)
+            .toList();
     }
 
 }
